@@ -21,19 +21,38 @@
 # SOFTWARE.
 import logging
 import json
-from .constants import Urls
+from .constants import (
+    Urls,
+    CampaignStatus,
+    HTTPMethods
+)
 
 _logger = logging.getLogger(__name__)
 
 class Campaign:
-    def __init__(self, advertiser_id, client):
-        self.advertiser_id = advertiser_id
+    def __init__(self, client):
         self.client = client
     
-    def get_campaigns(self):
-        args = {
-            "advertiser_id": self.advertiser_id
-        }
-        _logger.debug(f"Campaign GET: {args}")
-        response = self.client.make_request("GET", Urls.CAMPAIGN_GET_URL.value, args)
-        return response
+    def get_campaigns(self, params={}):
+        _logger.debug(f"Campaign GET: {params}")
+        return self.client.make_request(HTTPMethods.GET.value, Urls.CAMPAIGN_GET_URL.value, params)
+    
+    def create_campaign(self, params={}):
+        return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_CREATE_URL, params)
+    
+    def update_campaign(self, params):
+        return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_UPDATE_URL, params)
+    
+    def _update_campaign_status(self, campaign_ids, status):
+        campaign_ids = list(campaign_ids) if isinstance(campaign_ids, str) else campaign_ids
+        params = {"campaign_ids": campaign_ids, "opt_status": status}
+        return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_UPDATE_STATUS_URL.value, params)
+    
+    def enable_campaigns(self, campaign_ids):
+        return self._update_campaign_status(campaign_ids=campaign_ids, status=CampaignStatus.ENABLE.value)
+    
+    def disable_campaigns(self, campaign_ids):
+        return self._update_campaign_status(campaign_ids=campaign_ids, status=CampaignStatus.DISABLE.value)
+    
+    def delete_campaigns(self, campaign_ids):
+        return self._update_campaign_status(campaign_ids=campaign_ids, status=CampaignStatus.DELETE.value)

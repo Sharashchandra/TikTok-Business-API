@@ -60,5 +60,6 @@ class TikTokBuisnessAPI:
 
     def make_request(self, method, url, params={}):
         print(method, url, params)
+        params.update({"advertiser_id": self.advertiser_id}) if "advertiser_id" not in params else None
         response = self._session.request(method, url, json=params)
         return json.loads(response.json()) if response.ok else response.text

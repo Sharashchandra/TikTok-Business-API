@@ -32,3 +32,15 @@ class Urls(Enum):
     CAMPAIGN_CREATE_URL = CAMPAIGN_BASE_URL + "create/"
     CAMPAIGN_UPDATE_URL = CAMPAIGN_BASE_URL + "update/"
     CAMPAIGN_UPDATE_STATUS_URL = CAMPAIGN_UPDATE_URL + "status/"
+
+class CampaignStatus(Enum):
+    ENABLE = "ENABLE"
+    DISABLE = "DISABLE"
+    DELETE = "DELETE"
+
+class HTTPMethods(Enum):
+    GET = "GET"
+    POST = "POST"
+    PATCH = "PATCH"
+    PUT = "PUT"
+    DELETE = "DELETE"
