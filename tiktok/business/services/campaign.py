@@ -19,3 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import logging
+import json
+from .constants import Urls
+
+_logger = logging.getLogger(__name__)
+
+class Campaign:
+    def __init__(self, advertiser_id, client):
+        self.advertiser_id = advertiser_id
+        self.client = client
+    
+    def get_campaigns(self):
+        args = {
+            "advertiser_id": self.advertiser_id
+        }
+        _logger.debug(f"Campaign GET: {args}")
+        response = self.client.make_request("GET", Urls.CAMPAIGN_GET_URL.value, args)
+        return response
