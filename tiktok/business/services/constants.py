@@ -33,7 +33,15 @@ class Urls(Enum):
     CAMPAIGN_UPDATE_URL = CAMPAIGN_BASE_URL + "update/"
     CAMPAIGN_UPDATE_STATUS_URL = CAMPAIGN_UPDATE_URL + "status/"
 
-class CampaignStatus(Enum):
+    # Ad Group
+    AD_GROUP_BASE_URL = BASE_URL + VERSION + "/adgroup/"
+    AD_GROUP_GET_URL = AD_GROUP_BASE_URL + "get/"
+    AD_GROUP_CREATE_URL = AD_GROUP_BASE_URL + "create/"
+    AD_GROUP_UPDATE_URL = AD_GROUP_BASE_URL + "update/"
+    AD_GROUP_UPDATE_STATUS_URL = AD_GROUP_UPDATE_URL + "status/"
+    AD_GROUP_UPDATE_BUDGET_URL = AD_GROUP_UPDATE_URL + "budget/"
+
+class ServiceStatus(Enum):
     ENABLE = "ENABLE"
     DISABLE = "DISABLE"
     DELETE = "DELETE"

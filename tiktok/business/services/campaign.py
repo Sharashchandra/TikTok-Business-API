@@ -20,10 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import logging
-import json
 from .constants import (
     Urls,
-    CampaignStatus,
+    ServiceStatus,
     HTTPMethods
 )
 
@@ -33,11 +32,11 @@ class Campaign:
     def __init__(self, client):
         self.client = client
     
-    def get_campaigns(self, params={}):
+    def get_campaign(self, params):
         _logger.debug(f"Campaign GET: {params}")
         return self.client.make_request(HTTPMethods.GET.value, Urls.CAMPAIGN_GET_URL.value, params)
     
-    def create_campaign(self, params={}):
+    def create_campaign(self, params):
         return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_CREATE_URL, params)
     
     def update_campaign(self, params):
@@ -48,11 +47,11 @@ class Campaign:
         params = {"campaign_ids": campaign_ids, "opt_status": status}
         return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_UPDATE_STATUS_URL.value, params)
     
-    def enable_campaigns(self, campaign_ids):
-        return self._update_campaign_status(campaign_ids=campaign_ids, status=CampaignStatus.ENABLE.value)
+    def enable_campaign(self, campaign_ids):
+        return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.ENABLE.value)
     
-    def disable_campaigns(self, campaign_ids):
-        return self._update_campaign_status(campaign_ids=campaign_ids, status=CampaignStatus.DISABLE.value)
+    def disable_campaign(self, campaign_ids):
+        return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.DISABLE.value)
     
-    def delete_campaigns(self, campaign_ids):
-        return self._update_campaign_status(campaign_ids=campaign_ids, status=CampaignStatus.DELETE.value)
+    def delete_campaign(self, campaign_ids):
+        return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.DELETE.value)
