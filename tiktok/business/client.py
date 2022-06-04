@@ -27,7 +27,7 @@ import json
 import logging.config
 import requests
 
-from .services.campaign import Campaign
+from .services import *
 
 _logger = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ class TikTokBuisnessAPI:
     BUISNESS_URL = "https://business-api.tiktok.com/open_api"
     SANDBOX_URL = "https://sandbox-ads.tiktok.com/open_api"
     VERSION = "v1.2"
+    DEFAULT_ACCESS_TOKEN_FILE_PATH = os.path.join(os.path.expanduser("~"), os.path.join(".tiktok", "access_token.json"))
     
     def __init__(self, access_token, advertiser_id, sandbox=False):
         self.__access_token = access_token
@@ -48,6 +49,32 @@ class TikTokBuisnessAPI:
 
         if not self._session:
             self._create_session()
+    
+    @classmethod
+    def from_json_file(cls, sandbox=False, advertiser_id=None, json_file_path=DEFAULT_ACCESS_TOKEN_FILE_PATH):
+        if not os.path.exists(json_file_path):
+            raise Exception(f"File not found at {json_file_path}")
+        with open(json_file_path, "r") as f:
+            data = json.loads(f.read())
+        access_token = data["access_token"]
+        advertiser_id = data["advertiser_id"] if advertiser_id is None else advertiser_id
+
+        return cls(access_token, advertiser_id, sandbox)
+    
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["access_token"], data["advertiser_id"], data["sandbox"])
+    
+    def _sanitize_params(self, params):
+        for key, value in params.items():
+            if isinstance(value, list):
+                print(f"{key} is list")
+                params[key] = json.dumps(value)
+            elif not isinstance(value, str):
+                print(f"{key} is not str")
+                params[key] = str(value)
+        
+        return params
     
     def _create_session(self):
         self._session = requests.Session()
@@ -60,8 +87,20 @@ class TikTokBuisnessAPI:
     @property
     def campaign(self):
         if not self.modules.get("campaign"):
-            self.modules["campaign"] = Campaign(advertiser_id=self.advertiser_id, client=self)
+            self.modules["campaign"] = Campaign(client=self)
         return self.modules["campaign"]
+    
+    @property
+    def ad_group(self):
+        if not self.modules.get("ad_group"):
+            self.modules["ad_group"] = AdGroup(client=self)
+        return self.modules["ad_group"]
+    
+    @property
+    def ad(self):
+        if not self.modules.get("ad"):
+            self.modules["ad"] = Ad(client=self)
+        return self.modules["ad"]
     
     def build_url(self, base_url, service_endpoint):
         base_url = (base_url + "/") if not base_url.endswith("/") else base_url
@@ -70,7 +109,8 @@ class TikTokBuisnessAPI:
         return base_url + service_endpoint
 
     def make_request(self, method, url, params={}):
-        print(method, url, params)
         params.update({"advertiser_id": self.advertiser_id}) if "advertiser_id" not in params else None
-        response = self._session.request(method, url, json=params)
-        return json.loads(response.json()) if response.ok else response.text
+        params = self._sanitize_params(params)
+        print(method, url, params)
+        response = self._session.request(method, url, params=params)
+        return response.json() if response.ok else response.text
