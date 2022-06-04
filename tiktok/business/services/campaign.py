@@ -31,21 +31,26 @@ _logger = logging.getLogger(__name__)
 class Campaign:
     def __init__(self, client):
         self.client = client
+        self.camapign_base_url = self.client.build_url(self.client.base_url, "campaign/")
     
     def get_campaign(self, params):
         _logger.debug(f"Campaign GET: {params}")
-        return self.client.make_request(HTTPMethods.GET.value, Urls.CAMPAIGN_GET_URL.value, params)
+        url = self.client.build_url(self.camapign_base_url, "get/")
+        return self.client.make_request(HTTPMethods.GET.value, url, params)
     
     def create_campaign(self, params):
-        return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_CREATE_URL, params)
+        url = self.client.build_url(self.camapign_base_url, "create/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def update_campaign(self, params):
-        return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_UPDATE_URL, params)
+        url = self.client.build_url(self.camapign_base_url, "update/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def _update_campaign_status(self, campaign_ids, status):
         campaign_ids = list(campaign_ids) if isinstance(campaign_ids, str) else campaign_ids
         params = {"campaign_ids": campaign_ids, "opt_status": status}
-        return self.client.make_request(HTTPMethods.POST.value, Urls.CAMPAIGN_UPDATE_STATUS_URL.value, params)
+        url = self.client.build_url(self.camapign_base_url, "update/status/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def enable_campaign(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.ENABLE.value)

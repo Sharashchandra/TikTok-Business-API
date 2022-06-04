@@ -22,25 +22,6 @@
 import os
 from enum import Enum
 
-BASE_URL = os.environ.get("BASE_URL", "https://google.com/")
-VERSION = os.environ.get("VERSION", "v1.2")
-
-class Urls(Enum):
-    # Campaign
-    CAMPAIGN_BASE_URL = BASE_URL + VERSION + "/campaign/"
-    CAMPAIGN_GET_URL = CAMPAIGN_BASE_URL + "get/"
-    CAMPAIGN_CREATE_URL = CAMPAIGN_BASE_URL + "create/"
-    CAMPAIGN_UPDATE_URL = CAMPAIGN_BASE_URL + "update/"
-    CAMPAIGN_UPDATE_STATUS_URL = CAMPAIGN_UPDATE_URL + "status/"
-
-    # Ad Group
-    AD_GROUP_BASE_URL = BASE_URL + VERSION + "/adgroup/"
-    AD_GROUP_GET_URL = AD_GROUP_BASE_URL + "get/"
-    AD_GROUP_CREATE_URL = AD_GROUP_BASE_URL + "create/"
-    AD_GROUP_UPDATE_URL = AD_GROUP_BASE_URL + "update/"
-    AD_GROUP_UPDATE_STATUS_URL = AD_GROUP_UPDATE_URL + "status/"
-    AD_GROUP_UPDATE_BUDGET_URL = AD_GROUP_UPDATE_URL + "budget/"
-
 class ServiceStatus(Enum):
     ENABLE = "ENABLE"
     DISABLE = "DISABLE"

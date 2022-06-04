@@ -31,23 +31,29 @@ _logger = logging.getLogger(__name__)
 class AdGroup:
     def __init__(self, client):
         self.client = client
+        self.ad_group_base_url = self.client.build_url(self.client.base_url, "adgroup/")
     
     def get_ad_group(self, params):
-        return self.client.make_request(HTTPMethods.POST.value, Urls.AD_GROUP_GET_URL.value, params)
+        url = self.client.build_url(self.ad_group_base_url, "get/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def create_ad_group(self, params):
-        return self.client.make_request(HTTPMethods.POST.value, Urls.AD_GROUP_CREATE_URL.value, params)
+        url = self.client.build_url(self.ad_group_base_url, "create/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def update_ad_group(self, params):
-        return self.client.make_request(HTTPMethods.POST.value, Urls.AD_GROUP_UPDATE_URL.value, params)
+        url = self.client.build_url(self.ad_group_base_url, "update/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def update_ad_group_budget(self, params):
-        return self.client.make_request(HTTPMethods.POST.value, Urls.AD_GROUP_UPDATE_BUDGET_URL.value, params)
+        url = self.client.build_url(self.ad_group_base_url, "update/budget/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def _update_ad_group_status(self, adgroup_ids, status):
         adgroup_ids = list(adgroup_ids) if isinstance(adgroup_ids, str) else adgroup_ids
         params = {"adgroup_ids": adgroup_ids, "opt_status": status}
-        return self.client.make_request(HTTPMethods.POST.value, Urls.AD_GROUP_UPDATE_STATUS_URL.value, params)
+        url = self.client.build_url(self.ad_group_base_url, "update/status/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def enable_ad_group(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.ENABLE.value)
