@@ -32,27 +32,27 @@ class AdGroup:
         self.client = client
         self.ad_group_base_url = self.client.build_url(self.client.base_url, "adgroup/")
     
-    def get_ad_group(self, params):
+    def get_ad_group(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "get/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.GET.value, url, params)
     
-    def create_ad_group(self, params):
+    def create_ad_group(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "create/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def update_ad_group(self, params):
+    def update_ad_group(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "update/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def update_ad_group_budget(self, params):
+    def update_ad_group_budget(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "update/budget/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def _update_ad_group_status(self, adgroup_ids, status):
         adgroup_ids = [adgroup_ids] if isinstance(adgroup_ids, str) else adgroup_ids
         params = {"adgroup_ids": adgroup_ids, "opt_status": status}
         url = self.client.build_url(self.ad_group_base_url, "update/status/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def enable_ad_group(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.ENABLE.value)

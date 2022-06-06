@@ -31,7 +31,7 @@ from .services import *
 
 _logger = logging.getLogger(__name__)
 
-class TikTokBuisnessAPI:
+class TikTokBusinessClient:
     """TikTok Buisness client used to configure settings and fetch services."""
 
     _session = None
@@ -51,13 +51,16 @@ class TikTokBuisnessAPI:
             self._create_session()
     
     @classmethod
-    def from_json_file(cls, sandbox=False, advertiser_id=None, json_file_path=DEFAULT_ACCESS_TOKEN_FILE_PATH):
+    def from_json_file(cls, json_file_path=DEFAULT_ACCESS_TOKEN_FILE_PATH, advertiser_id=None, sandbox=False):
         if not os.path.exists(json_file_path):
             raise Exception(f"File not found at {json_file_path}")
         with open(json_file_path, "r") as f:
             data = json.loads(f.read())
         access_token = data["access_token"]
-        advertiser_id = data["advertiser_id"] if advertiser_id is None else advertiser_id
+        advertiser_id = data.get("advertiser_id") if not advertiser_id else advertiser_id
+
+        if not advertiser_id:
+            raise Exception("Advertiser id missing")
 
         return cls(access_token, advertiser_id, sandbox)
     

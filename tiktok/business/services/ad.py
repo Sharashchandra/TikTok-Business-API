@@ -32,23 +32,23 @@ class Ad:
         self.client = client
         self.ad_base_url = self.client.build_url(self.client.base_url, "ad/")
     
-    def get_ad(self, params):
+    def get_ad(self, params={}):
         url = self.client.build_url(self.ad_base_url, "get/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params or {})
+        return self.client.make_request(HTTPMethods.GET.value, url, params)
     
-    def create_ad(self, params):
+    def create_ad(self, params={}):
         url = self.client.build_url(self.ad_base_url, "create/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def update_ad(self, params):
+    def update_ad(self, params={}):
         url = self.client.build_url(self.ad_base_url, "update/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def _update_ad_status(self, ad_ids, status):
         ad_ids = [ad_ids] if isinstance(ad_ids, str) else ad_ids
         params = {"ad_ids": ad_ids, "opt_status": status}
         url = self.client.build_url(self.ad_base_url, "update/status/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def enable_ad(self, ad_ids):
         return self._update_ad_status(ad_ids=ad_ids, status=ServiceStatus.ENABLE.value)
