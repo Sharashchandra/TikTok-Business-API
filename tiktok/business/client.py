@@ -131,11 +131,18 @@ class TikTokBusinessClient:
         self.__set_headers({"Content-Type": "application/json"}) if not files else None
         params = self._sanitize_params(params)
         print(method, url, params)
-        response = self._session.request(method, url, params=params, files=files)
+        if files:
+            response = self._session.request(method, url, params=params, files=files)
+        else:
+            response = self._session.request(method, url, params=params)
         return response.json() if response.ok else response.text
     
-    def make_chunked_request(self, method, url, params={}, files=None):
+    def make_chunked_request(self, url, params={}, files=None):
         params.update({"advertiser_id": self.advertiser_id}) if "advertiser_id" not in params else None
         params = self._sanitize_params(params)
-        response = self._session.request(method, url, data=params, files=files)
+        print("POST", url, params)
+        if files:
+            response = self._session.post(url, params=params, files=files)
+        else:
+            response = self._session.post(url, params=params)
         return response.json() if response.ok else response.text

@@ -39,11 +39,14 @@ class Creative:
         self.asset_type = AssetTypes.FILE.value
     
     def __calculate_file_md5(self, file_path):
-        with open(asset_file_path, "rb") as f:
+        with open(file_path, "rb") as f:
             file_hash = hashlib.md5()
             while chunk := f.read(8192):
                 file_hash.update(chunk)
         return file_hash.hexdigest()
+    
+    def __calculate_chunk_md5(self, chunk):
+        return hashlib.md5(chunk).hexdigest()
     
     def __get_file_size(self, file_path):
         return os.path.getsize(file_path)
@@ -63,10 +66,10 @@ class Creative:
         self.asset_type = AssetTypes.MUSIC.value
         return self
     
-    def upload_file(self, image_file_path, file_name=None):
-        file_size = self.__get_file_size(image_file_path)
+    def upload_file(self, file_path, file_name=None):
+        file_size = self.__get_file_size(file_path)
         if file_size > (20 * 1024 * 1024):
-            return self._upload_file_in_chunks(image_file_path, file_name)
+            return self._upload_file_in_chunks(file_path, file_name)
 
         url = self.client.build_url(self.client.base_url, f"file/{self.asset_type}/ad/upload/")
         params = {
@@ -75,7 +78,7 @@ class Creative:
             f"{self.asset_type}_signature": self.__calculate_file_md5(file_path),
         }
         files = {f"{self.asset_type}_file": open(file_path, "rb")}
-        return self.client.make_request(HTTPMethods.POST.value, url, params, files)
+        return self.client.make_request(HTTPMethods.POST.value, url, params, files=files)
     
     def upload_file_by_url(self, url, file_name=None):
         url = self.client.build_url(self.client.base_url, f"file/{self.asset_type}/ad/upload/")
@@ -95,16 +98,45 @@ class Creative:
         return self.client.make_request(HTTPMethods.POST.value, url, params)
 
     def _upload_file_in_chunks(self, file_path, file_name=None):
-        upload_id = self._start_chunk_upload(file_path)
-        self._transfer_chunk(upload_id, file_path)
-        self._end_chunk_upload(upload_id)
+        upload_id, end_offset = self._start_chunk_upload(file_path, file_name)
+        self._transfer_chunk(upload_id, end_offset, file_path)
+        file_id = self._end_chunk_upload(upload_id)
+        return self.upload_file_by_file_id(file_id)
     
-    def _start_chunk_upload(self, file_path, file_name=None):
-        pass
+    def _start_chunk_upload(self, file_path, file_name):
+        url = self.client.build_url(self.client.base_url, "file/start/upload/")
+        params = {
+            "size": self.__get_file_size(file_path),
+            "content_type": self.asset_type,
+        }
+        params.update({"file_name": file_name}) if file_name else None
+        response = self.client.make_chunked_request(url, params)
+        print(response)
+        return (response["data"]["upload_id"], response["data"]["end_offset"])
     
-    def _transfer_chunk(self, upload_id, file_path, file_name=None):
-        pass
+    def _transfer_chunk(self, upload_id, end_offset, file_path, file_name=None):
+        url = self.client.build_url(self.client.base_url, "file/transfer/upload/")
+        start_offset = 0
+        end_offset = end_offset
+        chunk_size = (20*1024*1024)
+
+        with open(file_path, "rb") as f:
+            while chunk := f.read(chunk_size):
+                params = {
+                    "upload_id": upload_id,
+                    "start_offset": start_offset,
+                    "signature": self.__calculate_chunk_md5(chunk),
+                }
+                files = {"file": chunk}
+                response = self.client.make_chunked_request(url, params, files=files)
+                print(response)
+                start_offset = end_offset
+                end_offset += chunk_size
+
     
     def _end_chunk_upload(self, upload_id):
-        pass
+        url = self.client.build_url(self.client.base_url, f"file/finish/upload/")
+        response = self.client.make_chunked_request(url, {"upload_id": upload_id})
+        print(response)
+        return response["data"]['file_id']
     
