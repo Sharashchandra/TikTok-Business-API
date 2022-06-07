@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import os
 import logging
 import hashlib
 
@@ -26,7 +27,8 @@ from PIL import Image
 
 from .constants import (
     ServiceStatus,
-    HTTPMethods
+    HTTPMethods,
+    AssetTypes
 )
 
 _logger = logging.getLogger(__name__)
@@ -34,19 +36,75 @@ _logger = logging.getLogger(__name__)
 class Creative:
     def __init__(self, client):
         self.client = client
+        self.asset_type = AssetTypes.FILE.value
     
-    def __calculate_asset_md5(self, asset_file_path):
-        md5hash = hashlib.md5(Image.open(asset_file_path).tobytes())
-        return md5hash.hexdigest()
+    def __calculate_file_md5(self, file_path):
+        with open(asset_file_path, "rb") as f:
+            file_hash = hashlib.md5()
+            while chunk := f.read(8192):
+                file_hash.update(chunk)
+        return file_hash.hexdigest()
     
-    def upload_image_by_file(self, image_file_path, file_name=None):
-        raise NotImplementedError
+    def __get_file_size(self, file_path):
+        return os.path.getsize(file_path)
     
-    def upload_image_by_url(self, params={}):
-        url = self.client.build_url(self.client.base_url, "/file/image/ad/upload/")
+    @property
+    def image(self):
+        self.asset_type = AssetTypes.IMAGE.value
+        return self
+    
+    @property
+    def video(self):
+        self.asset_type = AssetTypes.VIDEO.value
+        return self
+    
+    @property
+    def music(self):
+        self.asset_type = AssetTypes.MUSIC.value
+        return self
+    
+    def upload_file(self, image_file_path, file_name=None):
+        file_size = self.__get_file_size(image_file_path)
+        if file_size > (20 * 1024 * 1024):
+            return self._upload_file_in_chunks(image_file_path, file_name)
+
+        url = self.client.build_url(self.client.base_url, f"file/{self.asset_type}/ad/upload/")
+        params = {
+            "upload_type": "UPLOAD_BY_FILE",
+            "file_name": file_name if file_name else os.path.basename(file_path),
+            f"{self.asset_type}_signature": self.__calculate_file_md5(file_path),
+        }
+        files = {f"{self.asset_type}_file": open(file_path, "rb")}
+        return self.client.make_request(HTTPMethods.POST.value, url, params, files)
+    
+    def upload_file_by_url(self, url, file_name=None):
+        url = self.client.build_url(self.client.base_url, f"file/{self.asset_type}/ad/upload/")
+        params = {
+            "upload_type": "UPLOAD_BY_URL",
+            f"{self.asset_type}_url": url,
+        }
+        params.update({"file_name": file_name}) if file_name else None
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def upload_image_by_file_id(self, params={}):
-        url = self.client.build_url(self.client.base_url, "/file/image/ad/upload/")
+    def upload_file_by_file_id(self, file_id, file_name=None):
+        url = self.client.build_url(self.client.base_url, f"file/{self.asset_type}/ad/upload/")
+        params = {
+            "upload_type": "UPLOAD_BY_FILE_ID",
+            "file_id": file_id,
+        }
         return self.client.make_request(HTTPMethods.POST.value, url, params)
+
+    def _upload_file_in_chunks(self, file_path, file_name=None):
+        upload_id = self._start_chunk_upload(file_path)
+        self._transfer_chunk(upload_id, file_path)
+        self._end_chunk_upload(upload_id)
+    
+    def _start_chunk_upload(self, file_path, file_name=None):
+        pass
+    
+    def _transfer_chunk(self, upload_id, file_path, file_name=None):
+        pass
+    
+    def _end_chunk_upload(self, upload_id):
+        pass
     

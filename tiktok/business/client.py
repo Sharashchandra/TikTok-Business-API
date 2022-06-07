@@ -69,23 +69,25 @@ class TikTokBusinessClient:
         return cls(data["access_token"], data["advertiser_id"], data["sandbox"])
     
     def _sanitize_params(self, params):
-        for key, value in params.items():
-            if isinstance(value, list):
-                print(f"{key} is list")
-                params[key] = json.dumps(value)
-            elif not isinstance(value, str):
-                print(f"{key} is not str")
-                params[key] = str(value)
-        
+        def cast_to_dtype(dictionary):
+            for key, value in dictionary.items():
+                if isinstance(value, dict):
+                    cast_to_dtype(value)
+                else:
+                    if isinstance(value, list):
+                        dictionary[key] = json.dumps(value)
+                    else:
+                        dictionary[key] = str(value)
+
+        cast_to_dtype(params)       
         return params
     
     def _create_session(self):
         self._session = requests.Session()
-        self.__set_headers()
+        self.__set_headers({"Access-Token": self.__access_token})
 
-    def __set_headers(self):
-        headers = {"Content-Type": "application/json", "Access-Token": self.__access_token}
-        self._session.headers.update(headers)
+    def __set_headers(self, values):
+        self._session.headers.update(values)
     
     @property
     def campaign(self):
@@ -119,13 +121,21 @@ class TikTokBusinessClient:
     
     def build_url(self, base_url, service_endpoint):
         base_url = (base_url + "/") if not base_url.endswith("/") else base_url
+        service_endpoint = service_endpoint[1:] if service_endpoint.startswith("/") else service_endpoint
         service_endpoint = (service_endpoint + "/") if not service_endpoint.endswith("/") else service_endpoint        
         
         return base_url + service_endpoint
 
-    def make_request(self, method, url, params={}):
+    def make_request(self, method, url, params={}, files=None):
         params.update({"advertiser_id": self.advertiser_id}) if "advertiser_id" not in params else None
+        self.__set_headers({"Content-Type": "application/json"}) if not files else None
         params = self._sanitize_params(params)
         print(method, url, params)
-        response = self._session.request(method, url, params=params)
+        response = self._session.request(method, url, params=params, files=files)
+        return response.json() if response.ok else response.text
+    
+    def make_chunked_request(self, method, url, params={}, files=None):
+        params.update({"advertiser_id": self.advertiser_id}) if "advertiser_id" not in params else None
+        params = self._sanitize_params(params)
+        response = self._session.request(method, url, data=params, files=files)
         return response.json() if response.ok else response.text

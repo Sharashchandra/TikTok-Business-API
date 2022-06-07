@@ -33,3 +33,9 @@ class HTTPMethods(Enum):
     PATCH = "PATCH"
     PUT = "PUT"
     DELETE = "DELETE"
+
+class AssetTypes(Enum):
+    IMAGE = "image"
+    VIDEO = "video"
+    MUSIC = "music"
+    FILE = "file"
