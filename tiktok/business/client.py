@@ -105,6 +105,18 @@ class TikTokBusinessClient:
             self.modules["ad"] = Ad(client=self)
         return self.modules["ad"]
     
+    @property
+    def creative(self):
+        if not self.modules.get("creative"):
+            self.modules["creative"] = Creative(client=self)
+        return self.modules["creative"]
+    
+    @property
+    def audience(self):
+        if not self.modules.get("audience"):
+            self.modules["audience"] = Audience(client=self)
+        return self.modules["audience"]
+    
     def build_url(self, base_url, service_endpoint):
         base_url = (base_url + "/") if not base_url.endswith("/") else base_url
         service_endpoint = (service_endpoint + "/") if not service_endpoint.endswith("/") else service_endpoint        

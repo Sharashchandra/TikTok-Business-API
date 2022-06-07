@@ -19,8 +19,34 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from .campaign import Campaign
-from .ad_group import AdGroup
-from .ad import Ad
-from .creative import Creative
-from .audience import Audience
+import logging
+import hashlib
+
+from PIL import Image
+
+from .constants import (
+    ServiceStatus,
+    HTTPMethods
+)
+
+_logger = logging.getLogger(__name__)
+
+class Creative:
+    def __init__(self, client):
+        self.client = client
+    
+    def __calculate_asset_md5(self, asset_file_path):
+        md5hash = hashlib.md5(Image.open(asset_file_path).tobytes())
+        return md5hash.hexdigest()
+    
+    def upload_image_by_file(self, image_file_path, file_name=None):
+        raise NotImplementedError
+    
+    def upload_image_by_url(self, params={}):
+        url = self.client.build_url(self.client.base_url, "/file/image/ad/upload/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
+    
+    def upload_image_by_file_id(self, params={}):
+        url = self.client.build_url(self.client.base_url, "/file/image/ad/upload/")
+        return self.client.make_request(HTTPMethods.POST.value, url, params)
+    
