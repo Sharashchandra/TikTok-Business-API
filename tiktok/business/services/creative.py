@@ -24,7 +24,6 @@ import logging
 import hashlib
 
 from tiktok.business.services.constants import (
-    ServiceStatus,
     HTTPMethods,
     AssetTypes
 )
@@ -34,7 +33,7 @@ _logger = logging.getLogger(__name__)
 class Creative:
     def __init__(self, client):
         self.client = client
-        self.asset_type = AssetTypes.FILE.value
+        self.asset_type = None
     
     def __calculate_file_md5(self, file_path):
         with open(file_path, "rb") as f:
