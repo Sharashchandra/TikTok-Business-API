@@ -19,8 +19,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from .campaign import Campaign
-from .ad_group import AdGroup
-from .ad import Ad
-from .creative import Creative
-from .audience import Audience
+from tiktok.business.services.campaign import Campaign
+from tiktok.business.services.ad_group import AdGroup
+from tiktok.business.services.ad import Ad
+from tiktok.business.services.creative import Creative
+from tiktok.business.services.audience import Audience

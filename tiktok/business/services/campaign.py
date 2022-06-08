@@ -22,7 +22,7 @@
 import logging
 import json
 
-from .constants import (
+from tiktok.business.services.constants import (
     ServiceStatus,
     HTTPMethods
 )

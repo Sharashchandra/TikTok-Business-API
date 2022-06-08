@@ -23,9 +23,7 @@ import os
 import logging
 import hashlib
 
-from PIL import Image
-
-from .constants import (
+from tiktok.business.services.constants import (
     ServiceStatus,
     HTTPMethods,
     AssetTypes

@@ -20,14 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """A client for TikTok Buisness API"""
-import sys
 import os
-sys.path.insert(0, os.getcwd())
 import json
 import logging.config
 import requests
-
-from .services import *
+import pkgutil
 
 _logger = logging.getLogger(__name__)
 
@@ -45,10 +42,11 @@ class TikTokBusinessClient:
         self.advertiser_id = advertiser_id
         self.base_url = self.SANDBOX_URL if sandbox else self.BUISNESS_URL
         self.base_url = self.build_url(self.base_url, self.VERSION)
-        self.modules = {}
 
         if not self._session:
             self._create_session()
+        
+        self.discover_services()
     
     @classmethod
     def from_json_file(cls, json_file_path=DEFAULT_ACCESS_TOKEN_FILE_PATH, advertiser_id=None, sandbox=False):
@@ -66,7 +64,7 @@ class TikTokBusinessClient:
     
     @classmethod
     def from_dict(cls, data):
-        return cls(data["access_token"], data["advertiser_id"], data["sandbox"])
+        return cls(data["access_token"], data["advertiser_id"], data.get("sandbox"))
     
     def _sanitize_params(self, params):
         def cast_to_dtype(dictionary):
@@ -89,35 +87,21 @@ class TikTokBusinessClient:
     def __set_headers(self, values):
         self._session.headers.update(values)
     
-    @property
-    def campaign(self):
-        if not self.modules.get("campaign"):
-            self.modules["campaign"] = Campaign(client=self)
-        return self.modules["campaign"]
-    
-    @property
-    def ad_group(self):
-        if not self.modules.get("ad_group"):
-            self.modules["ad_group"] = AdGroup(client=self)
-        return self.modules["ad_group"]
-    
-    @property
-    def ad(self):
-        if not self.modules.get("ad"):
-            self.modules["ad"] = Ad(client=self)
-        return self.modules["ad"]
-    
-    @property
-    def creative(self):
-        if not self.modules.get("creative"):
-            self.modules["creative"] = Creative(client=self)
-        return self.modules["creative"]
-    
-    @property
-    def audience(self):
-        if not self.modules.get("audience"):
-            self.modules["audience"] = Audience(client=self)
-        return self.modules["audience"]
+    def __get_module_cls(self, module_name, module):
+        module_name = module_name.title().replace("_", "")
+        if hasattr(module, module_name):
+            return getattr(module, module_name)
+
+    def discover_services(self):
+        cwd = os.path.dirname(os.path.realpath(__file__))
+        services_path = os.path.join(cwd, "services")
+        for importer, modname, ispkg in pkgutil.iter_modules([services_path]):
+            module = importer.find_module(modname).load_module(modname)
+            cls_instance = self.__get_module_cls(modname, module)
+            if cls_instance:
+                setattr(self, modname, cls_instance(client=self))
+                _logger.debug(f"{modname} module loaded successfully")
+        _logger.debug("Finished loading modules")
     
     def build_url(self, base_url, service_endpoint):
         base_url = (base_url + "/") if not base_url.endswith("/") else base_url
