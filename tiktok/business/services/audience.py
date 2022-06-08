@@ -19,8 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import os
 import logging
-from .constants import (
+import hashlib
+from tiktok.business.services.constants import (
     ServiceStatus,
     HTTPMethods
 )
@@ -32,6 +34,14 @@ class Audience:
         self.client = client
         self.audience_base_url = self.client.build_url(self.client.base_url, "dmp/custom_audience/")
     
+    def __calculate_file_md5(self, file_path):
+        with open(file_path, "rb") as f:
+            file_hash = hashlib.md5()
+            while chunk := f.read(8192):
+                file_hash.update(chunk)
+        return file_hash.hexdigest()
+
+    
     def get_all_audiences(self, params={}):
         url = self.client.build_url(self.audience_base_url, "list/")
         return self.client.make_request(HTTPMethods.GET.value, url, params)
@@ -40,8 +50,16 @@ class Audience:
         url = self.client.build_url(self.audience_base_url, "get/")
         return self.client.make_request(HTTPMethods.GET.value, url, params)
     
-    def upload_audience(self, params, files):
-        raise NotImplementedError
+    def upload_audience(self, file_path, calculate_type):
+        if os.path.getsize(file_path) > (50 * 1024 * 1024):
+            raise Exception("File size should be less than 50MB")
+        url = self.client.build_url(self.audience_base_url, "file/upload/")
+        params = {
+            "calculate_type": calculate_type,
+            "file_signature": self.__calculate_file_md5(file_path)
+        }
+        files = {"file": open(file_path, "rb")}
+        return self.client.make_request(HTTPMethods.POST.value, url, params, files=files)
     
     def create_audience_by_file(self, params={}):
         url = self.client.build_url(self.audience_base_url, "create/")
