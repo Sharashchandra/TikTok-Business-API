@@ -43,7 +43,8 @@ class Reports:
         params.update({"page_size": 1000}) if "page_size" not in params else None
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def check_asynchronous_report_task(self, params={}):
+    def check_asynchronous_report_task(self, task_id):
+        params = {"task_id": task_id}
         url = self.client.build_url(self.reports_base_url, "task/check/")
         return self.client.make_request(HTTPMethods.GET.value, url, params)
     

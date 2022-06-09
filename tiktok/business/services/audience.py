@@ -46,7 +46,9 @@ class Audience:
         url = self.client.build_url(self.audience_base_url, "list/")
         return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
     
-    def get_audience_details(self, params={}):
+    def get_audience_details(self, custom_audience_ids):
+        custom_audience_ids = [custom_audience_ids] if isinstance(custom_audience_ids, str) else custom_audience_ids
+        params = {"custom_audience_ids": custom_audience_ids}
         url = self.client.build_url(self.audience_base_url, "get/")
         return self.client.make_request(HTTPMethods.GET.value, url, params)
     
@@ -77,8 +79,9 @@ class Audience:
         url = self.client.build_url(self.audience_base_url, "update/")
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def delete_audience(self, params={}):
+    def delete_audience(self, custom_audience_ids):
         url = self.client.build_url(self.audience_base_url, "delete/")
+        params = {"custom_audience_ids": custom_audience_ids}
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def share_audience(self, params={}):
@@ -89,6 +92,7 @@ class Audience:
         url = self.client.build_url(self.audience_base_url, "share/cancel/")
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def get_audience_sharing_log(self, params={}):
+    def get_audience_sharing_log(self, custom_audience_id):
+        params = {"custom_audience_id": custom_audience_id}
         url = self.client.build_url(self.audience_base_url, "share/log/")
         return self.client.make_request(HTTPMethods.GET.value, url, params)
