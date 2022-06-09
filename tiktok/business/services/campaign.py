@@ -52,11 +52,11 @@ class Campaign:
         url = self.client.build_url(self.camapign_base_url, "update/status/")
         return self.client.make_request(HTTPMethods.POST.value, url, params or {})
     
-    def enable_campaign(self, campaign_ids):
+    def enable_campaigns(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.ENABLE.value)
     
-    def disable_campaign(self, campaign_ids):
+    def disable_campaigns(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.DISABLE.value)
     
-    def delete_campaign(self, campaign_ids):
+    def delete_campaigns(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.DELETE.value)

@@ -82,10 +82,14 @@ class TikTokBusinessClient:
     
     def _create_session(self):
         self._session = requests.Session()
+        self._session.hooks['response'].append(self.__request_response_hook)
         self.__set_headers({"Access-Token": self.__access_token})
 
     def __set_headers(self, values):
         self._session.headers.update(values)
+    
+    def __request_response_hook(self, *args, **kwargs):
+        self._session.headers.pop("Content-Type") if "Content-Type" in self._session.headers else None
     
     def __get_module_cls(self, module_name, module):
         module_name = module_name.title().replace("_", "")
@@ -119,7 +123,13 @@ class TikTokBusinessClient:
             response = self._session.request(method, url, params=params, files=files)
         else:
             response = self._session.request(method, url, params=params)
-        return response.json() if response.ok else response.text
+        if not response.ok:
+            raise Exception(response)
+
+        response = response.json()
+        if response["code"] != 0:
+            raise Exception(response["message"])
+        return response
     
     def make_chunked_request(self, url, params={}, files=None):
         params.update({"advertiser_id": self.advertiser_id}) if "advertiser_id" not in params else None
@@ -129,7 +139,13 @@ class TikTokBusinessClient:
             response = self._session.post(url, params=params, files=files)
         else:
             response = self._session.post(url, params=params)
-        return response.json() if response.ok else response.text
+        if not response.ok:
+            raise Exception(response)
+        
+        response = response.json()
+        if response["code"] != 0:
+            raise Exception(response["message"])
+        return response
     
     def make_paginated_request(self, method, url, params={}, files=None):
         params.update({"page_size": 1000}) if "page_size" not in params else None

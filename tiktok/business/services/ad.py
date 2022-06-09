@@ -50,11 +50,11 @@ class Ad:
         url = self.client.build_url(self.ad_base_url, "update/status/")
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def enable_ad(self, ad_ids):
+    def enable_ads(self, ad_ids):
         return self._update_ad_status(ad_ids=ad_ids, status=ServiceStatus.ENABLE.value)
     
-    def disable_ad(self, ad_ids):
+    def disable_ads(self, ad_ids):
         return self._update_ad_status(ad_ids=ad_ids, status=ServiceStatus.DISABLE.value)
     
-    def delete_ad(self, ad_ids):
+    def delete_ads(self, ad_ids):
         return self._update_ad_status(ad_ids=ad_ids, status=ServiceStatus.DELETE.value)

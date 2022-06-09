@@ -54,11 +54,11 @@ class AdGroup:
         url = self.client.build_url(self.ad_group_base_url, "update/status/")
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
-    def enable_ad_group(self, adgroup_ids):
+    def enable_ad_groups(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.ENABLE.value)
     
-    def disable_ad_group(self, adgroup_ids):
+    def disable_ad_groups(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.DISABLE.value)
     
-    def delete_ad_group(self, adgroup_ids):
+    def delete_ad_groups(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.DELETE.value)
