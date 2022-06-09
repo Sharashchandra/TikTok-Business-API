@@ -32,9 +32,9 @@ class AdGroup:
         self.client = client
         self.ad_group_base_url = self.client.build_url(self.client.base_url, "adgroup/")
     
-    def get_ad_group(self, params={}):
+    def get_ad_groups(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "get/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params)
+        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
     
     def create_ad_group(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "create/")

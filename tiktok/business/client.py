@@ -130,3 +130,16 @@ class TikTokBusinessClient:
         else:
             response = self._session.post(url, params=params)
         return response.json() if response.ok else response.text
+    
+    def make_paginated_request(self, method, url, params={}, files=None):
+        params.update({"page_size": 1000}) if "page_size" not in params else None
+        initial_response = self.make_request(method, url, params, files)
+        total_pages = initial_response["data"]["page_info"]["total_page"]
+        if total_pages > 1:
+            for i in range(2, total_pages + 1):
+                params["page"] = i
+                response = self.make_request(method, url, params, files)
+                initial_response["data"]["list"].extend(response["data"]["list"])
+                initial_response["request_id"] = response["request_id"]
+        initial_response["data"].pop("page_info")
+        return initial_response

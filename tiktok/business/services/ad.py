@@ -32,9 +32,9 @@ class Ad:
         self.client = client
         self.ad_base_url = self.client.build_url(self.client.base_url, "ad/")
     
-    def get_ad(self, params={}):
+    def get_ads(self, params={}):
         url = self.client.build_url(self.ad_base_url, "get/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params)
+        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
     
     def create_ad(self, params={}):
         url = self.client.build_url(self.ad_base_url, "create/")

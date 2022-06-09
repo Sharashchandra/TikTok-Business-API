@@ -36,10 +36,11 @@ class Reports:
     
     def get_synchronous_report(self, params={}):
         url = self.client.build_url(self.reports_base_url, "integrated/get/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params)
+        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
     
     def create_asynchronous_report_task(self, params={}):
         url = self.client.build_url(self.reports_base_url, "integrated/get/")
+        params.update({"page_size": 1000}) if "page_size" not in params else None
         return self.client.make_request(HTTPMethods.POST.value, url, params)
     
     def check_asynchronous_report_task(self, params={}):

@@ -34,9 +34,9 @@ class Campaign:
         self.client = client
         self.camapign_base_url = self.client.build_url(self.client.base_url, "campaign/")
     
-    def get_campaign(self, params={}):
+    def get_campaigns(self, params={}):
         url = self.client.build_url(self.camapign_base_url, "get/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params)
+        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
     
     def create_campaign(self, params={}):
         url = self.client.build_url(self.camapign_base_url, "create/")

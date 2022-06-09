@@ -44,7 +44,7 @@ class Audience:
     
     def get_all_audiences(self, params={}):
         url = self.client.build_url(self.audience_base_url, "list/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params)
+        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
     
     def get_audience_details(self, params={}):
         url = self.client.build_url(self.audience_base_url, "get/")
