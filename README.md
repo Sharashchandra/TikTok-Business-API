@@ -1,5 +1,7 @@
 # TikTok Business API Wrapper
 
+This is a minimal api wrapper to interface with the Tiktok business API
+
 # Installation
 
 ``` console

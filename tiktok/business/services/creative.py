@@ -108,7 +108,6 @@ class Creative:
         }
         params.update({"file_name": file_name}) if file_name else None
         response = self.client.make_chunked_request(url, params)
-        print(response)
         return (response["data"]["upload_id"], response["data"]["end_offset"])
     
     def _transfer_chunk(self, upload_id, end_offset, file_path, file_name=None):
@@ -126,7 +125,6 @@ class Creative:
                 }
                 files = {"file": chunk}
                 response = self.client.make_chunked_request(url, params, files=files)
-                print(response)
                 start_offset = end_offset
                 end_offset += chunk_size
 
@@ -134,6 +132,5 @@ class Creative:
     def _end_chunk_upload(self, upload_id):
         url = self.client.build_url(self.client.base_url, f"file/finish/upload/")
         response = self.client.make_chunked_request(url, {"upload_id": upload_id})
-        print(response)
         return response["data"]['file_id']
     
