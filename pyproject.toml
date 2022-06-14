@@ -4,3 +4,26 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "TikTok-Business-API"
+version = "1.0"
+description = "Minimal api wrapper for the TikTok Business API"
+readme = "README.md"
+authors = [{ name = "Sharashchandra Desai", email = "sharashchandra.desai@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python"
+]
+keywords = ["tiktok", "business", "api", "wrapper"]
+dependencies = [
+    "requests",
+]
+requires-python = ">=3.8"
+
+[project.urls]
+Homepage = "https://github.com/Sharashchandra/TikTok-Business-API"
