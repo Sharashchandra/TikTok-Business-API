@@ -124,11 +124,9 @@ class TikTokBusinessClient:
         else:
             response = self._session.request(method, url, params=params)
         if not response.ok:
-            raise Exception(response)
+            return {"code": response.status_code, "message": response.content}
 
         response = response.json()
-        if response["code"] != 0:
-            raise Exception(response["message"])
         return response
     
     def make_chunked_request(self, url, params={}, files=None):
@@ -140,22 +138,23 @@ class TikTokBusinessClient:
         else:
             response = self._session.post(url, params=params)
         if not response.ok:
-            raise Exception(response)
+            return {"code": response.status_code, "message": response.content}
         
         response = response.json()
-        if response["code"] != 0:
-            raise Exception(response["message"])
         return response
     
     def make_paginated_request(self, method, url, params={}, files=None):
         params.update({"page_size": 1000}) if "page_size" not in params else None
         initial_response = self.make_request(method, url, params, files)
-        total_pages = initial_response["data"]["page_info"]["total_page"]
-        if total_pages > 1:
-            for i in range(2, total_pages + 1):
-                params["page"] = i
-                response = self.make_request(method, url, params, files)
-                initial_response["data"]["list"].extend(response["data"]["list"])
-                initial_response["request_id"] = response["request_id"]
-        initial_response["data"].pop("page_info")
-        return initial_response
+        if initial_response["code"] == 0:
+            total_pages = initial_response["data"]["page_info"]["total_page"]
+            if total_pages > 1:
+                for i in range(2, total_pages + 1):
+                    params["page"] = i
+                    response = self.make_request(method, url, params, files)
+                    if response["code"] != 0:
+                        return response
+                    initial_response["data"]["list"].extend(response["data"]["list"])
+                    initial_response["request_id"] = response["request_id"]
+            initial_response["data"].pop("page_info")
+            return initial_response
