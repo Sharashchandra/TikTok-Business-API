@@ -19,46 +19,40 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import logging
-import requests
-import csv
+import os
 
-from tiktok.business.services.constants import (
-    HTTPMethods,
-)
-
-_logger = logging.getLogger(__name__)
 
 class Reports:
     def __init__(self, client):
         self.client = client
-        self.reports_base_url = self.client.build_url(self.client.base_url, "reports/")
-    
+        self.reports_base_url = self.client.build_url(self.client.base_url, "report/")
+
     def get_synchronous_report(self, params={}):
         url = self.client.build_url(self.reports_base_url, "integrated/get/")
-        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
-    
-    def create_asynchronous_report_task(self, params={}):
-        url = self.client.build_url(self.reports_base_url, "integrated/get/")
-        params.update({"page_size": 1000}) if "page_size" not in params else None
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
+        return self.client.make_paginated_request(url, params=params)
+
+    def create_asynchronous_report_task(self, data={}):
+        url = self.client.build_url(self.reports_base_url, "task/create/")
+        if "page_size" not in data:
+            data.update({"page_size": 1000})
+        return self.client.post(url, data=data)
+
     def check_asynchronous_report_task(self, task_id):
         params = {"task_id": task_id}
         url = self.client.build_url(self.reports_base_url, "task/check/")
-        return self.client.make_request(HTTPMethods.GET.value, url, params)
-    
+        return self.client.get(url, params)
+
     def __create_files(self, file_path):
         if not os.path.exists(file_path):
             os.makedirs(file_path)
-    
+
     def __stream_csv_to_file(self, url, task_id, file_path):
         params = {"advertiser_id": self.client.advertiser_id, "task_id": task_id}
         with open(file_path, "w") as f, self.client._session.get(url, params=params, stream=True) as r:
             for line in r.iter_lines():
                 f.write(line + "\n".encode("utf-8"))
         return file_path
-    
+
     def download_asynchronous_report(self, task_id, file_path):
         url = self.client.build_url(self.reports_base_url, "task/download/")
         self.__create_files(file_path)

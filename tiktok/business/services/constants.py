@@ -19,23 +19,23 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
 from enum import Enum
+
 
 class ServiceStatus(Enum):
     ENABLE = "ENABLE"
     DISABLE = "DISABLE"
     DELETE = "DELETE"
 
-class HTTPMethods(Enum):
-    GET = "GET"
-    POST = "POST"
-    PATCH = "PATCH"
-    PUT = "PUT"
-    DELETE = "DELETE"
 
 class AssetTypes(Enum):
     IMAGE = "image"
     VIDEO = "video"
     MUSIC = "music"
     FILE = "file"
+
+
+class UploadType(Enum):
+    UPLOAD_BY_FILE = "UPLOAD_BY_FILE"
+    UPLOAD_BY_FILE_ID = "UPLOAD_BY_FILE_ID"
+    UPLOAD_BY_URL = "UPLOAD_BY_URL"
