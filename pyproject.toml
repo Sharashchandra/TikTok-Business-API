@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TikTok-Business-API"
-version = "1.0"
+version = "1.2"
 description = "Minimal api wrapper for the TikTok Business API"
 readme = "README.md"
 authors = [{ name = "Sharashchandra Desai", email = "sharashchandra.desai@gmail.com" }]
@@ -27,3 +27,35 @@ requires-python = ">=3.8"
 
 [project.urls]
 Homepage = "https://github.com/Sharashchandra/TikTok-Business-API"
+"Bug Tracker" = "https://github.com/Sharashchandra/TikTok-Business-API/issues"
+
+[tool.ruff]
+# Same as Black.
+line-length = 120
+
+[tool.black]
+line-length = 120
+target-version = ['py38']
+exclude = '''
+(
+    \.direnv
+    |\.eggs
+    |\.git
+    |\.hg
+    |\.mypy_cache
+    |\.nox
+    |\.tox
+    |\.venv
+    |_build
+    |buck-out
+    |build
+    |dist
+    |__pypackages__
+)
+'''
+
+# Bandit
+[tool.bandit]
+exclude_dirs = ["tests"]
+tests = ["B201", "B301"]
+skips = ["B101", "B601"]

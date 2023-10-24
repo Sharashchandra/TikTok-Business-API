@@ -22,7 +22,7 @@ Obtaining an access_token is simple. Visit the authorization url mentioned in th
 By default, the access token will be written to `~/.tiktok/access_token.json`
 
 ``` python
-from tiktok.business.oauth2 import OAuth
+from tiktok.business.oauth2 import OAuth2
 
 access_token = OAuth2.get_access_token(
     app_id='YOUR_APP_ID',

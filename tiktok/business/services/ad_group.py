@@ -19,46 +19,41 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import logging
-from tiktok.business.services.constants import (
-    ServiceStatus,
-    HTTPMethods
-)
+from tiktok.business.services.constants import ServiceStatus
 
-_logger = logging.getLogger(__name__)
 
 class AdGroup:
     def __init__(self, client):
         self.client = client
         self.ad_group_base_url = self.client.build_url(self.client.base_url, "adgroup/")
-    
+
     def get_ad_groups(self, params={}):
         url = self.client.build_url(self.ad_group_base_url, "get/")
-        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
-    
-    def create_ad_group(self, params={}):
+        return self.client.make_paginated_request(url, params=params)
+
+    def create_ad_group(self, data={}):
         url = self.client.build_url(self.ad_group_base_url, "create/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
-    def update_ad_group(self, params={}):
+        return self.client.post(url, data=data)
+
+    def update_ad_group(self, data={}):
         url = self.client.build_url(self.ad_group_base_url, "update/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
-    def update_ad_group_budget(self, params={}):
-        url = self.client.build_url(self.ad_group_base_url, "update/budget/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
+        return self.client.post(url, data=data)
+
+    def update_ad_group_budget(self, data={}):
+        url = self.client.build_url(self.ad_group_base_url, "budget/update/")
+        return self.client.post(url, data=data)
+
     def _update_ad_group_status(self, adgroup_ids, status):
         adgroup_ids = [adgroup_ids] if isinstance(adgroup_ids, str) else adgroup_ids
-        params = {"adgroup_ids": adgroup_ids, "opt_status": status}
-        url = self.client.build_url(self.ad_group_base_url, "update/status/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
+        params = {"adgroup_ids": adgroup_ids, "operation_status": status}
+        url = self.client.build_url(self.ad_group_base_url, "status/update/")
+        return self.client.post(url, params)
+
     def enable_ad_groups(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.ENABLE.value)
-    
+
     def disable_ad_groups(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.DISABLE.value)
-    
+
     def delete_ad_groups(self, adgroup_ids):
         return self._update_ad_group_status(adgroup_ids=adgroup_ids, status=ServiceStatus.DELETE.value)

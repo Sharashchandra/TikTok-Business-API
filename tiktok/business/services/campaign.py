@@ -19,44 +19,37 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import logging
-import json
+from tiktok.business.services.constants import ServiceStatus
 
-from tiktok.business.services.constants import (
-    ServiceStatus,
-    HTTPMethods
-)
-
-_logger = logging.getLogger(__name__)
 
 class Campaign:
     def __init__(self, client):
         self.client = client
         self.camapign_base_url = self.client.build_url(self.client.base_url, "campaign/")
-    
+
     def get_campaigns(self, params={}):
         url = self.client.build_url(self.camapign_base_url, "get/")
-        return self.client.make_paginated_request(HTTPMethods.GET.value, url, params)
-    
-    def create_campaign(self, params={}):
+        return self.client.make_paginated_request(url, params=params)
+
+    def create_campaign(self, data={}):
         url = self.client.build_url(self.camapign_base_url, "create/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
-    def update_campaign(self, params={}):
+        return self.client.post(url, data=data)
+
+    def update_campaign(self, data={}):
         url = self.client.build_url(self.camapign_base_url, "update/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params)
-    
+        return self.client.post(url, data=data)
+
     def _update_campaign_status(self, campaign_ids, status):
         campaign_ids = [campaign_ids] if isinstance(campaign_ids, str) else campaign_ids
-        params = {"campaign_ids": campaign_ids, "opt_status": status}
-        url = self.client.build_url(self.camapign_base_url, "update/status/")
-        return self.client.make_request(HTTPMethods.POST.value, url, params or {})
-    
+        data = {"campaign_ids": campaign_ids, "operation_status": status}
+        url = self.client.build_url(self.camapign_base_url, "status/update/")
+        return self.client.post(url, data=data)
+
     def enable_campaigns(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.ENABLE.value)
-    
+
     def disable_campaigns(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.DISABLE.value)
-    
+
     def delete_campaigns(self, campaign_ids):
         return self._update_campaign_status(campaign_ids=campaign_ids, status=ServiceStatus.DELETE.value)
