@@ -146,7 +146,7 @@ class TikTokBusinessClient:
         if not files:
             headers = {"Content-Type": "application/json"}
             self.__set_headers(headers)
-        data = self.__set_advertiser_id(data=data)
+        data = self.__set_advertiser_id(values=data)
         logger.debug(f"POST {self._session.headers}, {url}, {data}, {files.keys()}")
 
         if files:
