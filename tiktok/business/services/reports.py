@@ -40,7 +40,7 @@ class Reports:
     def check_asynchronous_report_task(self, task_id):
         params = {"task_id": task_id}
         url = self.client.build_url(self.reports_base_url, "task/check/")
-        return self.client.get(url, params)
+        return self.client.get(url, params=params)
 
     def __create_files(self, file_path):
         if not os.path.exists(file_path):
