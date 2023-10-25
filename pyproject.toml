@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TikTok-Business-API"
-version = "1.3"
+version = "1.4"
 description = "Minimal api wrapper for the TikTok Business API"
 readme = "README.md"
 authors = [{ name = "Sharashchandra Desai", email = "sharashchandra.desai@gmail.com" }]
