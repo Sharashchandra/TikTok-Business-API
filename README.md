@@ -81,7 +81,7 @@ All the functionality of the modules can be accessed as attributes of the client
 
 Follow the steps outlined here to [create a client object](#Initializing-a-client)
 
-All of the function take the same parameters `params` as mentioned in the official documentation unless specified.
+All of the GET/LIST functions take the same parameters `params` and all the POST methods take `data` as mentioned in the official documentation unless specified.
 
 The client object keeps a track of the advertiser id and passes it along with each request. There is no need to explicitly pass it in the params.
 
@@ -91,10 +91,10 @@ The client object keeps a track of the advertiser id and passes it along with ea
 client.campaign.get_campaigns(params)
 
 # Create campaign
-client.campaign.create_campaigns(params)
+client.campaign.create_campaigns(data)
 
 # Update campaign
-client.campaign.update_campaign(params)
+client.campaign.update_campaign(data)
 
 # Enable campaigns (max allowed 100 campaign ids in a single request)
 client.campaign.enable_campaigns(campaigns_ids: List[str])
@@ -112,13 +112,13 @@ client.campaign.delete_campaigns(campaigns_ids: List[str])
 client.ad_group.get_ad_groups(params)
 
 # Create ad group
-client.ad_group.create_ad_group(params)
+client.ad_group.create_ad_group(data)
 
 # Update ad group
-client.ad_group.update_ad_group(params)
+client.ad_group.update_ad_group(data)
 
 # Update ad group budget
-client.ad_group.update_ad_group_budget(params)
+client.ad_group.update_ad_group_budget(data)
 
 # Enable ad groups (max allowed 100 adgroup_ids in a single request)
 client.ad_group.enable_adgroups(adgroups_ids: List[str])
@@ -135,11 +135,11 @@ client.ad_group.delete_adgroups(adgroups_ids: List[str])
 # Get ads (page_size set to 1000 by default)
 client.ad.get_ads(params)
 
-# Create ad 
-client.ad.create_ad(params)
+# Create ad
+client.ad.create_ad(data)
 
-# Update ad 
-client.ad.update_ad(params)
+# Update ad
+client.ad.update_ad(data)
 
 # Enable ads (max allowed 100 ad_ids in a single request)
 client.ad.enable_ads(ads_ids: List[str])
@@ -200,25 +200,25 @@ client.audience.get_audience_details(custom_audience_ids: List[str])
 client.audience.upload_audience(file_path: str, calculate_type: str)
 
 # Create custom audience by tiktok file paths
-client.audience.create_audience_by_file(params)
+client.audience.create_audience_by_file(data)
 
 # Create custom audience by rules
-client.audience.create_audience_by_rule(params)
+client.audience.create_audience_by_rule(data)
 
 # Create lookalike audience by file_ids
-client.audience.create_lookalike_audience(params)
+client.audience.create_lookalike_audience(data)
 
 # Update custom audience
-client.audience.update_audience(params)
+client.audience.update_audience(data)
 
 # Delete custom audience (max allowed 100 custom_audience_ids in a single request)
 client.audience.delete_audience(custom_audience_ids: List[str])
 
 # Share custom audience with advertiser accounts
-client.audience.share_audience(params)
+client.audience.share_audience(data)
 
 # Cancel audience sharing (currently an allowlist-only feature)
-client.audience.cancel_audience_sharing(params)
+client.audience.cancel_audience_sharing(data)
 
 # Get audience share log (currently an allowlist-only feature)
 client.audience.get_audience_sharing_log(custom_audience_id: str)
@@ -230,7 +230,7 @@ client.audience.get_audience_sharing_log(custom_audience_id: str)
 client.reports.get_synchronous_report(params)
 
 # Create asynchronous report task (page_size set to 1000 by default) (currently an allowlist-only feature)
-client.reports.create_asynchronous_report_task(params)
+client.reports.create_asynchronous_report_task(data)
 
 # Check asynchronous report task
 client.reports.check_asynchronous_report_task(task_id: str)

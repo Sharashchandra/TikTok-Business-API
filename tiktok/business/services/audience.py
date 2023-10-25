@@ -43,7 +43,7 @@ class Audience:
         custom_audience_ids = [custom_audience_ids] if isinstance(custom_audience_ids, str) else custom_audience_ids
         params = {"custom_audience_ids": custom_audience_ids}
         url = self.client.build_url(self.audience_base_url, "get/")
-        return self.client.get(url, params)
+        return self.client.get(url, params=params)
 
     def upload_audience(self, file_path, calculate_type):
         if os.path.getsize(file_path) > (50 * 1024 * 1024):
