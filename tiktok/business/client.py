@@ -142,7 +142,7 @@ class TikTokBusinessClient:
         response = response.json()
         return response
 
-    def post(self, url, data, files={}):
+    def post(self, url, data, files=None):
         if not files:
             headers = {"Content-Type": "application/json"}
             self.__set_headers(headers)
