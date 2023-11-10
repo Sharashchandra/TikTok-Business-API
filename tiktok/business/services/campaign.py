@@ -27,17 +27,17 @@ class Campaign:
         self.client = client
         self.camapign_base_url = self.client.build_url(self.client.base_url, "campaign/")
 
-    def get_campaigns(self, params={}):
+    def get_campaigns(self, params=None):
         url = self.client.build_url(self.camapign_base_url, "get/")
-        return self.client.make_paginated_request(url, params=params)
+        return self.client.make_paginated_request(url, params=params or {})
 
-    def create_campaign(self, data={}):
+    def create_campaign(self, data=None):
         url = self.client.build_url(self.camapign_base_url, "create/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def update_campaign(self, data={}):
+    def update_campaign(self, data=None):
         url = self.client.build_url(self.camapign_base_url, "update/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
     def _update_campaign_status(self, campaign_ids, status):
         campaign_ids = [campaign_ids] if isinstance(campaign_ids, str) else campaign_ids

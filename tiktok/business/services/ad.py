@@ -27,17 +27,17 @@ class Ad:
         self.client = client
         self.ad_base_url = self.client.build_url(self.client.base_url, "ad/")
 
-    def get_ads(self, params={}):
+    def get_ads(self, params=None):
         url = self.client.build_url(self.ad_base_url, "get/")
-        return self.client.make_paginated_request(url, params=params)
+        return self.client.make_paginated_request(url, params=params or {})
 
-    def create_ad(self, data={}):
+    def create_ad(self, data=None):
         url = self.client.build_url(self.ad_base_url, "create/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def update_ad(self, data={}):
+    def update_ad(self, data=None):
         url = self.client.build_url(self.ad_base_url, "update/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
     def _update_ad_status(self, ad_ids, status):
         ad_ids = [ad_ids] if isinstance(ad_ids, str) else ad_ids
@@ -53,3 +53,7 @@ class Ad:
 
     def delete_ads(self, ad_ids):
         return self._update_ad_status(ad_ids=ad_ids, status=ServiceStatus.DELETE.value)
+
+    def preview_ad(self, data=None):
+        url = self.client.build_url(self.client.base_url, "creative/ads_preview/create/")
+        return self.client.post(url, data=data or {})

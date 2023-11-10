@@ -27,15 +27,15 @@ class Reports:
         self.client = client
         self.reports_base_url = self.client.build_url(self.client.base_url, "report/")
 
-    def get_synchronous_report(self, params={}):
+    def get_synchronous_report(self, params=None):
         url = self.client.build_url(self.reports_base_url, "integrated/get/")
-        return self.client.make_paginated_request(url, params=params)
+        return self.client.make_paginated_request(url, params=params or {})
 
-    def create_asynchronous_report_task(self, data={}):
+    def create_asynchronous_report_task(self, data=None):
         url = self.client.build_url(self.reports_base_url, "task/create/")
         if "page_size" not in data:
             data.update({"page_size": 1000})
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
     def check_asynchronous_report_task(self, task_id):
         params = {"task_id": task_id}
