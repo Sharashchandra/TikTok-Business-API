@@ -25,24 +25,24 @@ from tiktok.business.services.constants import ServiceStatus
 class Campaign:
     def __init__(self, client):
         self.client = client
-        self.camapign_base_url = self.client.build_url(self.client.base_url, "campaign/")
+        self.campaign_base_url = self.client.build_url(self.client.base_url, "campaign/")
 
     def get_campaigns(self, params=None):
-        url = self.client.build_url(self.camapign_base_url, "get/")
+        url = self.client.build_url(self.campaign_base_url, "get/")
         return self.client.make_paginated_request(url, params=params or {})
 
     def create_campaign(self, data=None):
-        url = self.client.build_url(self.camapign_base_url, "create/")
+        url = self.client.build_url(self.campaign_base_url, "create/")
         return self.client.post(url, data=data or {})
 
     def update_campaign(self, data=None):
-        url = self.client.build_url(self.camapign_base_url, "update/")
+        url = self.client.build_url(self.campaign_base_url, "update/")
         return self.client.post(url, data=data or {})
 
     def _update_campaign_status(self, campaign_ids, status):
         campaign_ids = [campaign_ids] if isinstance(campaign_ids, str) else campaign_ids
         data = {"campaign_ids": campaign_ids, "operation_status": status}
-        url = self.client.build_url(self.camapign_base_url, "status/update/")
+        url = self.client.build_url(self.campaign_base_url, "status/update/")
         return self.client.post(url, data=data)
 
     def enable_campaigns(self, campaign_ids):
