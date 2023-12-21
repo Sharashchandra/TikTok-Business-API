@@ -27,21 +27,21 @@ class AdGroup:
         self.client = client
         self.ad_group_base_url = self.client.build_url(self.client.base_url, "adgroup/")
 
-    def get_ad_groups(self, params={}):
+    def get_ad_groups(self, params=None):
         url = self.client.build_url(self.ad_group_base_url, "get/")
-        return self.client.make_paginated_request(url, params=params)
+        return self.client.make_paginated_request(url, params=params or {})
 
-    def create_ad_group(self, data={}):
+    def create_ad_group(self, data=None):
         url = self.client.build_url(self.ad_group_base_url, "create/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def update_ad_group(self, data={}):
+    def update_ad_group(self, data=None):
         url = self.client.build_url(self.ad_group_base_url, "update/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def update_ad_group_budget(self, data={}):
+    def update_ad_group_budget(self, data=None):
         url = self.client.build_url(self.ad_group_base_url, "budget/update/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
     def _update_ad_group_status(self, adgroup_ids, status):
         adgroup_ids = [adgroup_ids] if isinstance(adgroup_ids, str) else adgroup_ids

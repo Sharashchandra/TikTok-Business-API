@@ -109,7 +109,7 @@ class Creative:
         url = self.client.build_url(self.client.base_url, "file/transfer/upload/")
         start_offset = 0
         end_offset = end_offset
-        chunk_size = 20 * 1024 * 1024
+        chunk_size = end_offset
 
         with open(file_path, "rb") as f:
             while chunk := f.read(chunk_size):
@@ -119,9 +119,12 @@ class Creative:
                     "signature": self.__calculate_chunk_md5(chunk),
                 }
                 files = {"file": chunk}
-                self.client.post(url, data=data, files=files)
-                start_offset = end_offset
-                end_offset += chunk_size
+                response = self.client.post(url, data=data, files=files)
+                if response["code"] != 0:
+                    raise Exception(response["message"])
+                start_offset = response["data"]["start_offset"]
+                end_offset = response["data"]["end_offset"]
+                chunk_size = end_offset - start_offset
 
     def _end_chunk_upload(self, upload_id):
         url = self.client.build_url(self.client.base_url, "file/finish/upload/")

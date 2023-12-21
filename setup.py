@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 setup(
     name="TikTok-Business-API",
     python_requires=">3.8",
-    version="1.4",
+    version="1.6",
     author="Sharashchandra Desai",
     author_email="sharashchandra.desai@gmail.com",
     url="https://github.com/Sharashchandra/TikTok-Business-API",

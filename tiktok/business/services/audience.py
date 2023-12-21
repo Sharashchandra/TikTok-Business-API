@@ -35,9 +35,9 @@ class Audience:
                 file_hash.update(chunk)
         return file_hash.hexdigest()
 
-    def get_all_audiences(self, params={}):
+    def get_all_audiences(self, params=None):
         url = self.client.build_url(self.audience_base_url, "list/")
-        return self.client.make_paginated_request(url, params=params)
+        return self.client.make_paginated_request(url, params=params or {})
 
     def get_audience_details(self, custom_audience_ids):
         custom_audience_ids = [custom_audience_ids] if isinstance(custom_audience_ids, str) else custom_audience_ids
@@ -53,38 +53,38 @@ class Audience:
         files = {"file": open(file_path, "rb")}
         return self.client.post(url, data=data, files=files)
 
-    def create_audience_by_file(self, data={}):
+    def create_audience_by_file(self, data=None):
         url = self.client.build_url(self.audience_base_url, "create/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def create_audience_by_rule(self, data={}):
+    def create_audience_by_rule(self, data=None):
         url = self.client.build_url(self.audience_base_url, "rule/create/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def create_lookalike_audience(self, data={}):
+    def create_lookalike_audience(self, data=None):
         url = self.client.build_url(self.audience_base_url, "lookalike/create/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def refresh_lookalike_audience(self, data={}):
+    def refresh_lookalike_audience(self, data=None):
         url = self.client.build_url(self.audience_base_url, "lookalike/update/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def update_audience(self, data={}):
+    def update_audience(self, data=None):
         url = self.client.build_url(self.audience_base_url, "update/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
     def delete_audience(self, custom_audience_ids):
         url = self.client.build_url(self.audience_base_url, "delete/")
         data = {"custom_audience_ids": custom_audience_ids}
         return self.client.post(url, data=data)
 
-    def share_audience(self, data={}):
+    def share_audience(self, data=None):
         url = self.client.build_url(self.audience_base_url, "share/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
-    def cancel_audience_sharing(self, data={}):
+    def cancel_audience_sharing(self, data=None):
         url = self.client.build_url(self.audience_base_url, "share/cancel/")
-        return self.client.post(url, data=data)
+        return self.client.post(url, data=data or {})
 
     def get_audience_sharing_log(self, custom_audience_id):
         url = self.client.build_url(self.audience_base_url, "share/log/")
