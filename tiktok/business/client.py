@@ -103,7 +103,8 @@ class TikTokBusinessClient:
         cwd = os.path.dirname(os.path.realpath(__file__))
         services_path = os.path.join(cwd, "services")
         for importer, modname, ispkg in pkgutil.iter_modules([services_path]):
-            module = importer.find_module(modname).load_module(modname)
+            spec = importer.find_spec(modname)
+            module = spec.loader.load_module()
             cls_instance = self.__get_module_cls(modname, module)
             if cls_instance:
                 setattr(self, modname, cls_instance(client=self))
