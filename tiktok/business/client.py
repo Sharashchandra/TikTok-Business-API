@@ -99,11 +99,19 @@ class TikTokBusinessClient:
         if hasattr(module, module_name):
             return getattr(module, module_name)
 
+    def __get_total_pages(self, response):
+        try:
+            total_page = response["data"]["page_info"].get("total_page", 0)
+            return int(total_page) if isinstance(total_page, str) else total_page
+        except (KeyError, TypeError, ValueError):
+            return 0
+
     def discover_services(self):
         cwd = os.path.dirname(os.path.realpath(__file__))
         services_path = os.path.join(cwd, "services")
         for importer, modname, ispkg in pkgutil.iter_modules([services_path]):
-            module = importer.find_module(modname).load_module(modname)
+            spec = importer.find_spec(modname)
+            module = spec.loader.load_module()
             cls_instance = self.__get_module_cls(modname, module)
             if cls_instance:
                 setattr(self, modname, cls_instance(client=self))
@@ -164,7 +172,7 @@ class TikTokBusinessClient:
             params.update({"page_size": 1000})
         initial_response = self.get(url, params=params)
         if initial_response["code"] == 0:
-            total_pages = initial_response["data"]["page_info"]["total_page"]
+            total_pages = self.__get_total_pages(response=initial_response)
             if total_pages > 1:
                 for i in range(2, total_pages + 1):
                     params["page"] = i
